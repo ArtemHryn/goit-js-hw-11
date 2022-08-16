@@ -80,6 +80,7 @@ function smoothyScroll() {
 }
 
 function showTotalPictures(totalImages) {
+  refs.imagesContainer.previousSibling.innerHTML = '';
   refs.imagesContainer.insertAdjacentHTML(
     'beforebegin',
     renderTotalHits(totalImages)

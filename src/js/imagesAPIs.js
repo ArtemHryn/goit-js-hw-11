@@ -22,7 +22,7 @@ export default class ImagesAPIService {
           orientation: 'horizontal',
           safesearch: true,
           page: this.page,
-          per_page: 200,
+          per_page: 40,
         },
       };
       this.totalImages += options.params.per_page;
