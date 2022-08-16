@@ -18,7 +18,7 @@ const loadMore = new LoadMore({
 });
 
 refs.form.addEventListener('submit', onSearch);
-loadMore.refs.button.addEventListener('click', onMoreImages);
+loadMore.refs.button.addEventListener('click', onMoreImages, { passive: true });
 
 
 async function onSearch(e) {
