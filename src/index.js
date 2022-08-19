@@ -17,24 +17,36 @@ const loadMore = new LoadMore({
   hidden: true,
 });
 
+let simpleGallery = new SimpleLightbox('.articles a', {
+  captionsData: 'alt',
+  captionDelay: 250,
+});
+
 refs.form.addEventListener('submit', onSearch);
 loadMore.refs.button.addEventListener('click', onMoreImages, { passive: true });
 
-
 async function onSearch(e) {
-  e.preventDefault();
-  clearImagesContainer();
-  imagesAPIs.resetPage();
-  imagesAPIs.query = e.currentTarget.elements.searchQuery.value;
-  const images = await imagesAPIs.fetchImages();
-  if (images.totalHits === 0) {
-    Notiflix.Notify.failure(`Sorry, there is no ${imagesAPIs.query}`);
-    return;
+  try {
+    e.preventDefault();
+    imagesAPIs.query = e.currentTarget.elements.searchQuery.value.trim();
+    if (!imagesAPIs.query) {
+      Notiflix.Notify.failure(`Oops, the search is empty`);
+      return;
+    }
+    clearImagesContainer();
+    imagesAPIs.resetPage();
+    const images = await imagesAPIs.fetchImages();
+    if (images.totalHits === 0) {
+      Notiflix.Notify.failure(`Sorry, there is no ${imagesAPIs.query}`);
+      return;
+    }
+    showTotalPictures(images.totalHits);
+    uploadingImages(images);
+    lazyLoad();
+    loadMore.show();
+  } catch (error) {
+    Notiflix.Notify.failure(error.message);
   }
-  showTotalPictures(images.totalHits);
-  uploadingImages(images);
-  lazyLoad();
-  loadMore.show();
 }
 
 function clearImagesContainer() {
@@ -62,11 +74,7 @@ function uploadingImages(images) {
     renderImages(images.hits)
   );
   loadMore.enable();
-  let simpleGallery = new SimpleLightbox('.articles a', {
-    captionsData: 'alt',
-    captionDelay: 250,
-
-  });
+  simpleGallery.refresh();
 }
 
 function smoothyScroll() {
